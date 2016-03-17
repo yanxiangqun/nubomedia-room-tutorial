@@ -1,6 +1,19 @@
-package org.kurento.room.demo;
+/*
+ * (C) Copyright 2016 NUBOMEDIA (http://www.nubomedia.eu)
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser General Public License
+ * (LGPL) version 2.1 which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ */
+package eu.nubomedia.tutorial.room;
 
-import org.kurento.commons.PropertiesManager;
 import org.kurento.room.NotificationRoomManager;
 import org.kurento.room.exception.RoomException;
 import org.slf4j.Logger;
@@ -15,27 +28,13 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Rest controller for the room demo app.
  *
- * @author Radu Tom Vlad (rvlad@naevatec.com)
- * @since 6.0.0
+ * @author Boni Garcia (boni.garcia@urjc.es)
+ * @since 6.4.1
  */
 @RestController
 public class DemoController {
 
   private static final Logger log = LoggerFactory.getLogger(DemoController.class);
-
-  private final static boolean DEMO_LOOPBACK_REMOTE = PropertiesManager.getProperty(
-      "demo.loopback.remote", false);
-  private final static boolean DEMO_LOOPBACK_AND_LOCAL = PropertiesManager.getProperty(
-      "demo.loopback.andLocal", false);
-
-  private static ClientConfig config;
-
-  static {
-    config = new ClientConfig();
-    config.setLoopbackRemote(DEMO_LOOPBACK_REMOTE);
-    config.setLoopbackAndLocal(DEMO_LOOPBACK_AND_LOCAL);
-    log.info("Set client config: {}", config);
-  }
 
   @Autowired
   private NotificationRoomManager roomManager;
@@ -51,22 +50,17 @@ public class DemoController {
 
   @RequestMapping("/close")
   public void closeRoom(@RequestParam("room") String room) {
-    log.warn("Trying to close the room '{}'", room);
+    log.debug("Trying to close the room '{}'", room);
     if (!roomManager.getRooms().contains(room)) {
-      log.warn("Unable to close room '{}', not found.", room);
+      log.debug("Unable to close room '{}', not found.", room);
       throw new ResourceNotFoundException("Room '" + room + "' not found");
     }
     try {
       roomManager.closeRoom(room);
     } catch (RoomException e) {
-      log.warn("Error closing room {}", room, e);
+      log.error("Error closing room {}", room, e);
       throw new ResourceNotFoundException(e.getMessage());
     }
   }
 
-  @RequestMapping("/getClientConfig")
-  public ClientConfig clientConfig() {
-    log.debug("Sending client config {}", config);
-    return config;
-  }
 }

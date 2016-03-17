@@ -1,18 +1,18 @@
 /*
- * (C) Copyright 2015 Kurento (http://kurento.org/)
+ * (C) Copyright 2016 NUBOMEDIA (http://www.nubomedia.eu)
  *
- * All rights reserved. This program and the accompanying materials are made
- * available under the terms of the GNU Lesser General Public License (LGPL)
- * version 2.1 which accompanies this distribution, and is available at
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser General Public License
+ * (LGPL) version 2.1 which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/lgpl-2.1.html
  *
- * This library is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
- * details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
  */
-
-package org.kurento.room.demo;
+package eu.nubomedia.tutorial.room;
 
 import java.io.IOException;
 
@@ -31,55 +31,33 @@ import com.google.gson.JsonObject;
 /**
  * User control that applies a face overlay filter when publishing video.
  *
- * @author Radu Tom Vlad (rvlad@naevatec.com)
+ * @author Boni Garcia (boni.garcia@urjc.es)
+ * @since 6.4.1
  */
-public class DemoJsonRpcUserControl extends JsonRpcUserControl {
+public class FaceOverlayUserControl extends JsonRpcUserControl {
 
   private static final String SESSION_ATTRIBUTE_HAT_FILTER = "hatFilter";
 
   private static final String CUSTOM_REQUEST_HAT_PARAM = "hat";
 
-  private static final Logger log = LoggerFactory.getLogger(DemoJsonRpcUserControl.class);
+  private static final Logger log = LoggerFactory.getLogger(FaceOverlayUserControl.class);
 
-  private String hatUrl;
+  private String hatUrl = "http://files.kurento.org/img/mario-wings.png";
+  private float offsetXPercent = -0.35F;
+  private float offsetYPercent = -1.2F;
+  private float widthPercent = 1.6F;
+  private float heightPercent = 1.6F;
 
-  private float offsetXPercent;
-  private float offsetYPercent;
-  private float widthPercent;
-  private float heightPercent;
-
-  public DemoJsonRpcUserControl(NotificationRoomManager roomManager) {
+  public FaceOverlayUserControl(NotificationRoomManager roomManager) {
     super(roomManager);
-  }
-
-  public void setHatUrl(String hatUrl) {
-    this.hatUrl = hatUrl;
-    log.info("Hat URL: {}", hatUrl);
-  }
-
-  public void setHatCoords(JsonObject hatCoords) {
-    if (hatCoords.get("offsetXPercent") != null) {
-      offsetXPercent = hatCoords.get("offsetXPercent").getAsFloat();
-    }
-    if (hatCoords.get("offsetYPercent") != null) {
-      offsetYPercent = hatCoords.get("offsetYPercent").getAsFloat();
-    }
-    if (hatCoords.get("widthPercent") != null) {
-      widthPercent = hatCoords.get("widthPercent").getAsFloat();
-    }
-    if (hatCoords.get("heightPercent") != null) {
-      heightPercent = hatCoords.get("heightPercent").getAsFloat();
-    }
-    log.info("Hat coords:\n\toffsetXPercent = {}\n\toffsetYPercent = {}"
-        + "\n\twidthPercent = {}\n\theightPercent = {}", offsetXPercent, offsetYPercent,
-        widthPercent, heightPercent);
   }
 
   @Override
   public void customRequest(Transaction transaction, Request<JsonObject> request,
       ParticipantRequest participantRequest) {
     try {
-      if (request.getParams() == null || request.getParams().get(CUSTOM_REQUEST_HAT_PARAM) == null) {
+      if (request.getParams() == null
+          || request.getParams().get(CUSTOM_REQUEST_HAT_PARAM) == null) {
         throw new RuntimeException("Request element '" + CUSTOM_REQUEST_HAT_PARAM + "' is missing");
       }
       boolean hatOn = request.getParams().get(CUSTOM_REQUEST_HAT_PARAM).getAsBoolean();
@@ -94,8 +72,8 @@ public class DemoJsonRpcUserControl extends JsonRpcUserControl {
         faceOverlayFilter.setOverlayedImage(this.hatUrl, this.offsetXPercent, this.offsetYPercent,
             this.widthPercent, this.heightPercent);
         roomManager.addMediaElement(pid, faceOverlayFilter);
-        transaction.getSession().getAttributes()
-        .put(SESSION_ATTRIBUTE_HAT_FILTER, faceOverlayFilter);
+        transaction.getSession().getAttributes().put(SESSION_ATTRIBUTE_HAT_FILTER,
+            faceOverlayFilter);
       } else {
         if (!transaction.getSession().getAttributes().containsKey(SESSION_ATTRIBUTE_HAT_FILTER)) {
           throw new RuntimeException("This user has no hat filter yet");

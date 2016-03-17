@@ -237,12 +237,7 @@ function Participants() {
     };
 
     this.showMessage = function (room, user, message) {
-//        console.log(JSON.stringify(mainParticipant.videoElement));
-//        console.log(JSON.stringify(localParticipant.videoElement()));
-//        console.log(user);
-
         var ul = document.getElementsByClassName("list");
-
         var chatDiv = document.getElementById('chatDiv');
         var messages = $("#messages");
         var updateScroll = true;
@@ -252,7 +247,7 @@ function Participants() {
         }
         console.log(localParticipant)
         var localUser = localParticipant.thumbnailId.replace("_webcam", "").replace("video-", "");
-        if (room === roomName && user === localUser) { //me
+        if (user === localUser) { //me
 
             var li = document.createElement('li');
             li.className = "list-row list-row--has-primary list-row--has-separator";
@@ -260,7 +255,7 @@ function Participants() {
             div1.className = "list-secondary-tile";
             var img = document.createElement("img");
             img.className = "list-primary-tile__img";
-            img.setAttribute("src", "http://ui.lumapps.com/images/placeholder/2-square.jpg");
+            img.setAttribute("src", "img/incoming.png");
             var div2 = document.createElement('div');
             div2.className = "list-content-tile list-content-tile--two-lines";
             var strong = document.createElement('strong');
@@ -274,18 +269,6 @@ function Participants() {
             li.appendChild(div2);
             ul[0].appendChild(li);
 
-//               <li class="list-row list-row--has-primary list-row--has-separator">
-//                        <div class="list-secondary-tile">
-//                            <img class="list-primary-tile__img" src="http://ui.lumapps.com/images/placeholder/2-square.jpg">
-//                        </div>
-//
-//                        <div class="list-content-tile list-content-tile--two-lines">
-//                            <strong>User 1</strong>
-//                            <span>.............................</span>
-//                        </div>
-//                    </li>
-
-
         } else {//others
 
             var li = document.createElement('li');
@@ -294,7 +277,7 @@ function Participants() {
             div1.className = "list-primary-tile";
             var img = document.createElement("img");
             img.className = "list-primary-tile__img";
-            img.setAttribute("src", "http://ui.lumapps.com/images/placeholder/1-square.jpg");
+            img.setAttribute("src", "img/outcoming.png");
             var div2 = document.createElement('div');
             div2.className = "list-content-tile list-content-tile--two-lines";
             var strong = document.createElement('strong');
@@ -308,17 +291,6 @@ function Participants() {
             li.appendChild(div2);
             ul[0].appendChild(li);
             autoOpenChat();
-
-//                 <li class="list-row list-row--has-primary list-row--has-separator">
-//                        <div class="list-primary-tile">
-//                            <img class="list-primary-tile__img" src="http://ui.lumapps.com/images/placeholder/1-square.jpg">
-//                        </div>
-//
-//                        <div class="list-content-tile list-content-tile--two-lines">
-//                            <strong>User 2</strong>
-//                            <span>.............................</span>
-//                        </div>
-//                    </li>
         }
         
         if (updateScroll) {

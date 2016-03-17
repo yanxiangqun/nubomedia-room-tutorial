@@ -15,14 +15,6 @@ kurento_room.controller('loginController', function ($scope, $http, ServiceParti
             error(function (data, status, headers, config) {
             });
 
-    $http.get('/getClientConfig').
-             success(function (data, status, headers, config) {
-            	console.log(JSON.stringify(data));
-            	$scope.clientConfig = data;
-             }).
-             error(function (data, status, headers, config) {
-             });
-    
     $http.get('/getUpdateSpeakerInterval').
 	    success(function (data, status, headers, config) {
 	        $scope.updateSpeakerInterval = data
@@ -51,11 +43,6 @@ kurento_room.controller('loginController', function ($scope, $http, ServiceParti
 
         var wsUri = 'wss://' + location.host + '/room';
 
-        //show loopback stream from server
-        var displayPublished = $scope.clientConfig.loopbackRemote || false;
-        //also show local stream when display my remote
-        var mirrorLocal = $scope.clientConfig.loopbackAndLocal || false;
-        
         var kurento = KurentoRoom(wsUri, function (error, kurento) {
 
             if (error)
@@ -80,9 +67,10 @@ kurento_room.controller('loginController', function ($scope, $http, ServiceParti
             localStream.addEventListener("access-accepted", function () {
                 room.addEventListener("room-connected", function (roomEvent) {
                 	var streams = roomEvent.streams;
-                	if (displayPublished ) {
-                		localStream.subscribeToMyRemote();
-                	}
+
+                    // Uncomment this line to see local stream
+                    // localStream.subscribeToMyRemote();
+
                 	localStream.publish();
                     ServiceRoom.setLocalStream(localStream.getWebRtcPeer());
                     for (var i = 0; i < streams.length; i++) {
@@ -92,7 +80,8 @@ kurento_room.controller('loginController', function ($scope, $http, ServiceParti
 
                 room.addEventListener("stream-published", function (streamEvent) {
                 	 ServiceParticipant.addLocalParticipant(localStream);
-                	 if (mirrorLocal && localStream.displayMyRemote()) {
+
+                     if (localStream.displayMyRemote()) {
                 		 var localVideo = kurento.Stream(room, {
                              video: true,
                              id: "localStream"
