@@ -105,6 +105,7 @@ kurento_room.controller('loginController', function ($scope, $http, ServiceParti
 
                 room.addEventListener("error-room", function (error) {
                     ServiceParticipant.showError($window, LxNotificationService, error);
+                    kurento.close(true);
                 });
 
                 room.addEventListener("error-media", function (msg) {
