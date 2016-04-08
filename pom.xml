@@ -32,7 +32,7 @@
 		<url>https://github.com/nubomedia/nubomedia-room-tutorial</url>
 		<connection>scm:git:https://github.com/nubomedia/nubomedia-room-tutorial</connection>
 		<developerConnection>scm:git://git@github.com:nubomedia/nubomedia-room-tutorial</developerConnection>
-		<tag>develop</tag>
+		<tag>master</tag>
 	</scm>
 
 	<developers>
