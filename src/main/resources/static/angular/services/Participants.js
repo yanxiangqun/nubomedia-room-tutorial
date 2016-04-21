@@ -82,6 +82,7 @@ function Participants() {
     var roomName;
     var that = this;
     var connected = true;
+    var displayingRelogin = false;
     var mainSpeaker = true;
     
     this.isConnected = function() {
@@ -206,8 +207,9 @@ function Participants() {
         updateVideoStyle();
     };
 
+    // only called when leaving the room
     this.removeParticipants = function () {
-
+        connected = false;
         for (var index in participants) {
             var participant = participants[index];
             participant.remove();
@@ -299,21 +301,36 @@ function Participants() {
     };
 
     this.showError = function ($window, LxNotificationService, e) {
+        if (displayingRelogin) {
+            console.warn('Already displaying an alert that leads to relogin');
+            return false;
+          }
+        displayingRelogin = true;
+        that.removeParticipants();
         LxNotificationService.alert('Error!', e.error.message, 'Reconnect', function(answer) {
-        	connected = false;
-            $window.location.href = '#/login';
+            displayingRelogin = false;
+            $window.location.href = '/';
         });
     };
     
     this.forceClose = function ($window, LxNotificationService, msg) {
+        if (displayingRelogin) {
+            console.warn('Already displaying an alert that leads to relogin');
+            return false;
+          }
+        displayingRelogin = true;
+        that.removeParticipants();
         LxNotificationService.alert('Warning!', msg, 'Reload', function(answer) {
-        	that.removeParticipants();
-        	connected = false;
+            displayingRelogin = false;
             $window.location.href = '/';
         });
     };
     
     this.alertMediaError = function ($window, LxNotificationService, msg, callback) {
+        if (displayingRelogin) {
+            console.warn('Already displaying an alert that leads to relogin');
+            return false;
+          }
     	LxNotificationService.confirm('Warning!', 'Server media error: <<' + msg
     			+ ">>. Please reconnect.", { cancel:'Disagree', ok:'Agree' }, 
     			function(answer) {
