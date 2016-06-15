@@ -20,27 +20,33 @@ import org.kurento.client.FaceOverlayFilter;
 import org.kurento.client.MediaElement;
 import org.kurento.jsonrpc.Transaction;
 import org.kurento.jsonrpc.message.Request;
+import org.kurento.module.datachannelexample.KmsShowData;
 import org.kurento.room.NotificationRoomManager;
 import org.kurento.room.api.pojo.ParticipantRequest;
 import org.kurento.room.rpc.JsonRpcUserControl;
+import org.kurento.room.rpc.ParticipantSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonObject;
 
 /**
- * User control that applies a face overlay filter when publishing video.
+ * User control that extends the publishing video capabilities:
+ * <ul>
+ * <li>applies a face overlay filter</li>
+ * <li>enables data channels and connects a demo KMS module to the publisher's pipeline</li>
+ * </ul>
  *
  * @author Boni Garcia (boni.garcia@urjc.es)
  * @since 6.4.1
  */
-public class FaceOverlayUserControl extends JsonRpcUserControl {
+public class NubomediaRoomUserControl extends JsonRpcUserControl {
 
   private static final String SESSION_ATTRIBUTE_HAT_FILTER = "hatFilter";
 
   private static final String CUSTOM_REQUEST_HAT_PARAM = "hat";
 
-  private static final Logger log = LoggerFactory.getLogger(FaceOverlayUserControl.class);
+  private static final Logger log = LoggerFactory.getLogger(NubomediaRoomUserControl.class);
 
   private String hatUrl = "http://files.kurento.org/img/mario-wings.png";
   private float offsetXPercent = -0.35F;
@@ -48,16 +54,38 @@ public class FaceOverlayUserControl extends JsonRpcUserControl {
   private float widthPercent = 1.6F;
   private float heightPercent = 1.6F;
 
-  public FaceOverlayUserControl(NotificationRoomManager roomManager) {
+  public NubomediaRoomUserControl(NotificationRoomManager roomManager) {
     super(roomManager);
+  }
+
+  @Override
+  public void publishVideo(Transaction transaction, Request<JsonObject> request,
+      ParticipantRequest participantRequest) {
+    String pid = participantRequest.getParticipantId();
+    ParticipantSession session = getParticipantSession(transaction);
+    if (session == null) {
+      log.warn("No participant session info found when publishing for session {}", pid);
+    } else {
+      if (session.useDataChannels()) {
+        // add kms module/filter
+        log.info("Applying KMS Data Channel module to session {}", pid);
+        try {
+          // Media logic
+          KmsShowData kmsShowData = new KmsShowData.Builder(roomManager.getPipeline(pid)).build();
+          roomManager.addMediaElement(pid, kmsShowData);
+        } catch (Exception e) {
+          log.warn("Unable to add kms datachannels example filter to session {}", pid, e);
+        }
+      }
+    }
+    super.publishVideo(transaction, request, participantRequest);
   }
 
   @Override
   public void customRequest(Transaction transaction, Request<JsonObject> request,
       ParticipantRequest participantRequest) {
     try {
-      if (request.getParams() == null
-          || request.getParams().get(CUSTOM_REQUEST_HAT_PARAM) == null) {
+      if (request.getParams() == null || request.getParams().get(CUSTOM_REQUEST_HAT_PARAM) == null) {
         throw new RuntimeException("Request element '" + CUSTOM_REQUEST_HAT_PARAM + "' is missing");
       }
       boolean hatOn = request.getParams().get(CUSTOM_REQUEST_HAT_PARAM).getAsBoolean();
@@ -72,8 +100,8 @@ public class FaceOverlayUserControl extends JsonRpcUserControl {
         faceOverlayFilter.setOverlayedImage(this.hatUrl, this.offsetXPercent, this.offsetYPercent,
             this.widthPercent, this.heightPercent);
         roomManager.addMediaElement(pid, faceOverlayFilter);
-        transaction.getSession().getAttributes().put(SESSION_ATTRIBUTE_HAT_FILTER,
-            faceOverlayFilter);
+        transaction.getSession().getAttributes()
+            .put(SESSION_ATTRIBUTE_HAT_FILTER, faceOverlayFilter);
       } else {
         if (!transaction.getSession().getAttributes().containsKey(SESSION_ATTRIBUTE_HAT_FILTER)) {
           throw new RuntimeException("This user has no hat filter yet");

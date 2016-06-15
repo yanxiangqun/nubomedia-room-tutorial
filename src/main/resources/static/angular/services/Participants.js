@@ -271,6 +271,8 @@ function Participants() {
             li.appendChild(div2);
             ul[0].appendChild(li);
 
+            //also show message as video overlay
+            localParticipant.getStream().sendData(message);
         } else {//others
 
             var li = document.createElement('li');
