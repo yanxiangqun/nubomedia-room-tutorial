@@ -44,8 +44,14 @@
 		<!-- Nubomedia -->
 		<nubomedia-media-client.version>6.5.0</nubomedia-media-client.version>
 
-		<!-- Main class -->
-		<start-class>eu.nubomedia.tutorial.room.NubomediaRoomApp</start-class>
+		<!-- WebJars -->
+		<jquery-ui.version>1.11.4</jquery-ui.version>
+		<angular.version>1.5.7</angular.version>
+		<angular-route.version>1.5.7</angular-route.version>
+		<angular-fullscreen.version>1.0.1</angular-fullscreen.version>
+		<angular-clipboard.version>1.4.2</angular-clipboard.version>
+		<material-design-iconic-font.version>1.1.1</material-design-iconic-font.version>
+		<lumx.version>0.2.50</lumx.version>
 	</properties>
 
 	<dependencies>
@@ -70,53 +76,60 @@
 			<artifactId>nubomedia-media-client</artifactId>
 			<version>${nubomedia-media-client.version}</version>
 		</dependency>
+
+		<!-- WebJars -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>webjars-locator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>jquery</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery-ui</artifactId>
+			<version>${jquery-ui.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>angular</artifactId>
+			<version>${angular.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>angular-route</artifactId>
+			<version>${angular-route.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>angular-clipboard</artifactId>
+			<version>${angular-clipboard.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>angular-fullscreen</artifactId>
+			<version>${angular-fullscreen.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>material-design-iconic-font</artifactId>
+			<version>${material-design-iconic-font.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>lumx</artifactId>
+			<version>${lumx.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
+		<!-- Create a runnable JAR file -->
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<mainClass>${start-class}</mainClass>
-					<layout>ZIP</layout>
-					<executable>true</executable>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
-
-			<!-- Call to bower install when compiling -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>exec-bower-install</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>bower</executable>
-							<workingDirectory>${project.build.directory}/classes</workingDirectory>
-							<arguments>
-								<argument>install</argument>
-								<argument>--allow-root</argument>
-							</arguments>
-						</configuration>
-					</execution>
-				</executions>
-				<configuration>
-					<mainClass>${start-class}</mainClass>
-				</configuration>
-			</plugin>
-
 		</plugins>
 
 		<!-- Filtering resources (${label}) -->
@@ -130,13 +143,6 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>banner.txt</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>.</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>bower.json</include>
 				</includes>
 			</resource>
 		</resources>
