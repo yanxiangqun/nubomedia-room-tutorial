@@ -42,7 +42,7 @@
 		<kurento-datachannelexample.version>6.6.0</kurento-datachannelexample.version>
 
 		<!-- Nubomedia -->
-		<nubomedia-media-client.version>6.5.0</nubomedia-media-client.version>
+		<nubomedia-media-client.version>6.6.0</nubomedia-media-client.version>
 
 		<!-- WebJars -->
 		<jquery-ui.version>1.11.4</jquery-ui.version>
