@@ -9,7 +9,7 @@
 	<parent>
 		<groupId>org.kurento</groupId>
 		<artifactId>kurento-room</artifactId>
-		<version>6.6.0</version>
+		<version>6.6.1</version>
 	</parent>
 
 	<name>NUBOMEDIA Tutorial - Room</name>

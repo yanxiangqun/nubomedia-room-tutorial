@@ -12,3 +12,5 @@ log.xml
 .externalToolBuilders
 *.pyc
 *bower_components/
+/nubomedia-room-tutorial.iml
+/.idea/
